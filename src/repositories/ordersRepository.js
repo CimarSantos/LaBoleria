@@ -46,7 +46,29 @@ export async function getOrdersFromOrders() {
 }
 
 export async function getOrdersById(id) {
-  return db.query(`SELECT * FROM ${TABLE.ORDERS} WHERE id = $1;`, [id]);
+  return db.query(
+    `SELECT 
+      o.id AS "orderId", 
+      o."createdAt", 
+      o.quantity, 
+      o."totalPrice", 
+      c.id AS "clientId", 
+      c.name AS "clientName", 
+      c.address AS "clientAddress", 
+      c.phone AS "clientPhone", 
+      ca.id AS "cakeId", 
+      ca.name AS "cakeName", 
+      ca.price AS "cakePrice", 
+      ca.description AS "cakeDescription", 
+      ca.image AS "cakeImage"
+    FROM ${TABLE.ORDERS} o
+    INNER JOIN ${TABLE.CLIENTS} c 
+      ON o."clientId" = c.id
+    INNER JOIN ${TABLE.CAKES} ca 
+      ON o."cakeId" = ca.id
+      WHERE o.id = $1;`,
+    [id]
+  );
 }
 
 export async function getOrdersByDate(date) {
