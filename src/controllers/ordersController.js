@@ -31,3 +31,59 @@ export async function postOrder(req, res) {
     return res.status(STATUS_CODE.SERVER_ERROR).send(error.message);
   }
 }
+
+export async function getOrders(req, res) {
+  try {
+    const date = req.query.date;
+    let orders;
+    if (date) {
+      orders = await ordersRepository.getOrdersByDate(date);
+    } else {
+      orders = await ordersRepository.getOrdersFromOrders();
+    }
+
+    if (orders.rowCount === 0)
+      return res
+        .status(STATUS_CODE.NOT_FOUND)
+        .send("Não há pedidos registrados.");
+
+    const formattedOrders = orders.rows.map((row) => ({
+      client: {
+        id: row.clientId,
+        name: row.clientName,
+        address: row.clientAddress,
+        phone: row.clientPhone,
+      },
+      cake: {
+        id: row.cakeId,
+        name: row.cakeName,
+        price: row.cakePrice,
+        description: row.cakeDescription,
+        image: row.cakeImage,
+      },
+      orderId: row.orderId,
+      createdAt: row.createdAt,
+      quantity: row.quantity,
+      totalPrice: row.totalPrice,
+    }));
+
+    res.status(STATUS_CODE.OK).json(formattedOrders);
+  } catch (error) {
+    return res.status(STATUS_CODE.SERVER_ERROR).send(error.message);
+  }
+}
+
+export async function getOrdersById(req, res) {
+  const { id } = req.params;
+  try {
+    const orders = await ordersRepository.getOrdersById(id);
+
+    if (orders.rowCount === 0)
+      return res
+        .status(STATUS_CODE.NOT_FOUND)
+        .send("Não há pedidos registrados.");
+    res.status(STATUS_CODE.OK).send(orders.rows);
+  } catch (error) {
+    return res.status(STATUS_CODE.SERVER_ERROR).send(error.message);
+  }
+}

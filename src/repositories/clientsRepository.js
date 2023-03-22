@@ -8,3 +8,7 @@ export async function insertClientsIntoClients(name, address, phone) {
     [name, address, phone, name]
   );
 }
+
+export async function getClientsById(id) {
+  return db.query(`SELECT * FROM ${TABLE.CLIENTS} WHERE id = $1;`, [id]);
+}

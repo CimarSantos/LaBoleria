@@ -20,3 +20,15 @@ export async function postClient(req, res) {
     return res.status(STATUS_CODE.SERVER_ERROR).send(error.message);
   }
 }
+
+export async function getClient(req, res) {
+  const { id } = req.params;
+  try {
+    const client = await clientsRepository.getClientsById(id);
+    if (client.rowCount === 0)
+      return res.status(STATUS_CODE.NOT_FOUND).send("Cliente não encontrado");
+    res.status(STATUS_CODE.OK).send(client.rows);
+  } catch (error) {
+    return res.status(STATUS_CODE.SERVER_ERROR).send(error.message);
+  }
+}
