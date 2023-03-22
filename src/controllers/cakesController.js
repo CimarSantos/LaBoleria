@@ -11,7 +11,7 @@ export async function postCake(req, res) {
       description,
       image
     );
-    if (rowCount === 1) return res.sendStatus(STATUS_CODE.OK);
+    if (rowCount === 1) return res.sendStatus(STATUS_CODE.CREATED);
     else {
       return res
         .status(STATUS_CODE.CONFLICT)
