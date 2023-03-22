@@ -83,25 +83,27 @@ export async function getOrdersById(req, res) {
         .status(STATUS_CODE.NOT_FOUND)
         .send("Não há pedidos registrados.");
       
-    const formattedOrder = orders.rows.map((row) => ({
-      client: {
-        id: row.clientId,
-        name: row.clientName,
-        address: row.clientAddress,
-        phone: row.clientPhone,
-      },
-      cake: {
-        id: row.cakeId,
-        name: row.cakeName,
-        price: row.cakePrice,
-        description: row.cakeDescription,
-        image: row.cakeImage,
-      },
-      orderId: row.orderId,
-      createdAt: row.createdAt,
-      quantity: row.quantity,
-      totalPrice: row.totalPrice,
-    }));
+      
+      const row = orders.rows[0];
+      const formattedOrder = {
+        client: {
+          id: row.clientId,
+          name: row.clientName,
+          address: row.clientAddress,
+          phone: row.clientPhone,
+        },
+        cake: {
+          id: row.cakeId,
+          name: row.cakeName,
+          price: row.cakePrice,
+          description: row.cakeDescription,
+          image: row.cakeImage,
+        },
+        orderId: row.orderId,
+        createdAt: row.createdAt,
+        quantity: row.quantity,
+        totalPrice: row.totalPrice,
+      };
 
     res.status(STATUS_CODE.OK).send(formattedOrder);
   } catch (error) {
