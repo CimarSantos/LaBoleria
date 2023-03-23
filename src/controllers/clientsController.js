@@ -24,10 +24,31 @@ export async function postClient(req, res) {
 export async function getClient(req, res) {
   const { id } = req.params;
   try {
-    const client = await clientsRepository.getClientsById(id);
+    const client = await clientsRepository.getClientsAndOrdersById(id);
     if (client.rowCount === 0)
       return res.status(STATUS_CODE.NOT_FOUND).send("Cliente não encontrado");
     res.status(STATUS_CODE.OK).send(client.rows);
+  } catch (error) {
+    return res.status(STATUS_CODE.SERVER_ERROR).send(error.message);
+  }
+}
+
+export async function getClientsOrdersByClientId(req, res) {
+  const { id } = req.params;
+  try {
+    const result = await clientsRepository.getClientsAndOrdersById(id);
+    if (result.rowCount === 0)
+      return res.status(STATUS_CODE.NOT_FOUND).send("Cliente não encontrado");
+
+    const formattedResult = result.rows.map((row) => ({
+      orderId: row.orderId,
+      quantity: row.quantity,
+      createdAt: row.createdAt,
+      totalPrice: row.totalPrice,
+      cakeName: row.cakeName,
+    }));
+
+    res.status(STATUS_CODE.OK).send(formattedResult);
   } catch (error) {
     return res.status(STATUS_CODE.SERVER_ERROR).send(error.message);
   }

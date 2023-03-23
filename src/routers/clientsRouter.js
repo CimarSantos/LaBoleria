@@ -1,6 +1,9 @@
 import { Router } from "express";
 import { schemas } from "../schemas/schemas.js";
-import { postClient, getClient } from "../controllers/clientsController.js";
+import {
+  postClient,
+  getClientsOrdersByClientId,
+} from "../controllers/clientsController.js";
 
 import schemaValidator from "../middlewares/schemaValidator.js";
 
@@ -11,6 +14,6 @@ clientsRouter.post(
   schemaValidator(schemas.clientsSchema),
   postClient
 );
-clientsRouter.get("/clients/:id/orders", getClient);
+clientsRouter.get("/clients/:id/orders", getClientsOrdersByClientId);
 
 export default clientsRouter;
